@@ -54,7 +54,7 @@ export default function Login() {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 via-blue-300 to-white px-4">
         <div className="w-full max-w-md bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-6 md:p-8">
             <header className="mb-6 text-center">
-            <h2 className="text-3xl font-semibold text-blue-950 mb-2">Selamat datang Kembali</h2>
+            <h2 className="text-3xl font-semibold text-blue-950 mb-2">Selamat Datang Kembali</h2>
             <p className="text-sm text-gray-600">Masuk untuk melanjutkan ke akunmu</p>
             </header>
 

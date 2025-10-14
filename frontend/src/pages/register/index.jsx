@@ -57,7 +57,7 @@ export default function Register() {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 via-blue-300 to-white px-4">
         <div className="w-full max-w-md bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-6 md:p-8">
             <header className="mb-6 text-center">
-            <h1 className="text-2xl font-semibold text-blue-950 mb-2">Selamat datang</h1>
+            <h1 className="font-semibold text-blue-950 mb-2">Selamat Datang</h1>
             <p className="text-sm text-gray-600">Isi untuk melanjutkan mendaftar akunmu</p>
             </header>
 
