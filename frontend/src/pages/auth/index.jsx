@@ -3,9 +3,8 @@ import { Link } from "react-router-dom";
 
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -13,8 +12,8 @@ export default function Login() {
 
   const validate = () => {
     const e = {};
-    if (!email) e.email = "Email wajib diisi";
-    else if (!/^\S+@\S+\.\S+$/.test(email)) e.email = "Format email tidak valid";
+    if (!username) e.username = "username wajib diisi";
+    else if (!/^\S+@\S+\.\S+$/.test(username)) e.username = "Format username tidak valid";
     if (!password) e.password = "Password wajib diisi";
     else if (password.length < 6) e.password = "Password minimal 6 karakter";
     return e;
@@ -40,7 +39,7 @@ export default function Login() {
 
       // MOCK: simulasi sukses
       await new Promise((r) => setTimeout(r, 700));
-      setMessage({ type: "success", text: "Login berhasil — (simulasi)" });
+      setMessage({ type: "success", text: "Login berhasil" });
       // redirect contoh: router.push('/dashboard')
     } catch (err) {
       setMessage({ type: "error", text: err.message || "Gagal login" });
@@ -71,20 +70,20 @@ export default function Login() {
 
             <form onSubmit={handleSubmit} noValidate>
             <label className="block mb-2">
-                <span className="text-sm text-gray-700">Email</span>
+                <span className="text-sm text-gray-700">Username</span>
                 <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className={`mt-1 text-black block w-full rounded-md border px-3 py-2 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.email ? "border-red-300" : "border-gray-200"
+                    errors.username ? "border-red-300" : "border-gray-200"
                 }`}
                 placeholder="contoh@domain.com"
-                aria-invalid={errors.email ? "true" : "false"}
-                aria-describedby={errors.email ? "err-email" : undefined}
+                aria-invalid={errors.username ? "true" : "false"}
+                aria-describedby={errors.username ? "err-username" : undefined}
                 />
-                {errors.email && (
-                <p id="err-email" className="mt-1 text-xs text-red-600">{errors.email}</p>
+                {errors.username && (
+                <p id="err-username" className="mt-1 text-xs text-red-600">{errors.username}</p>
                 )}
             </label>
 
@@ -107,7 +106,7 @@ export default function Login() {
                     type="button"
                     onClick={() => setShowPassword((s) => !s)}
                     className="bg-blue-900 absolute right-0 top-1/2 -translate-y-1/2 text-sm px-2 py-1 rounded-md focus:outline-none"
-                    aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                    aria-label={showPassword ? "Hidden" : "Show"}
                 >
                     {showPassword ? "Sembunyikan" : "Tampilkan"}
                 </button>
@@ -139,26 +138,6 @@ export default function Login() {
                 {loading ? "Masuk..." : "Masuk"}
             </button>
             </form>
-
-            <div className="mt-6 text-center text-sm text-gray-600">atau masuk dengan</div>
-
-            <div className="mt-4 grid grid-cols-2 gap-3">
-            <button
-                type="button"
-                className=" bg-blue-950 flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm hover:bg-blue-900"
-                onClick={() => setMessage({ type: "info", text: "Fitur social login belum terpasang (placeholder)." })}
-            >
-                {/* icon placeholder */}
-                <span>Google</span>
-            </button>
-            <button
-                type="button"
-                className="bg-blue-950 flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm hover:bg-blue-900"
-                onClick={() => setMessage({ type: "info", text: "Fitur social login belum terpasang (placeholder)." })}
-            >
-                <span>GitHub</span>
-            </button>
-            </div>
 
             <footer className="mt-6 text-center text-sm text-gray-600">
             Belum punya akun?<Link className="link-lgn" to="/register">Daftar</Link> 
