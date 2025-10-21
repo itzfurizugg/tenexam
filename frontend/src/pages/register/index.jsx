@@ -160,16 +160,16 @@ export default function Register() {
             </button>
             </form>
 
-            <div className="mt-6 text-center text-sm text-gray-600">atau masuk dengan</div>
+            {/* <div className="mt-6 text-center text-sm text-gray-600">atau masuk dengan</div> */}
 
-            <div className="mt-4 grid grid-cols-2 gap-3">
+            {/* <div className="mt-4 grid grid-cols-2 gap-3">
             <button
                 type="button"
                 className=" bg-blue-950 flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm hover:bg-blue-900"
                 onClick={() => setMessage({ type: "info", text: "Fitur social Register belum terpasang (placeholder)." })}
-            >
+            > */}
                 {/* icon placeholder */}
-                <span>Google</span>
+                {/* <span>Google</span>
             </button>
             <button
                 type="button"
@@ -178,7 +178,7 @@ export default function Register() {
             >
                 <span>GitHub</span>
             </button>
-            </div>
+            </div> */}
 
             <footer className="mt-6 text-center text-sm text-gray-600">
             Sudah punya akun? <Link className="link-lgn" to="/">Log in disini</Link> 

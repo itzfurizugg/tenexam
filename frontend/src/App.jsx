@@ -1,15 +1,17 @@
 import * as React from "react";
 
-import {
-  MemoryRouter,
-  Routes,
-  Route,
-} from "react-router-dom";
-import { BrowserRouter } from "react-router-dom";
+// import {
+//   MemoryRouter,
+//   Routes,
+//   Route,
+// } from "react-router-dom";
+// import { BrowserRouter } from "react-router-dom";
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 
 import Dashboard from "./pages/dashboard/Index";
-import Login from "./pages/auth";
+import Login from "./pages/auth/index";
 import Register from "./pages/register/index";
 
 

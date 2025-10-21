@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -9,11 +8,15 @@ export default function Login() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
+  const navigate = useNavigate();
 
   const validate = () => {
     const e = {};
-    if (!username) e.username = "username wajib diisi";
-    else if (!/^\S+@\S+\.\S+$/.test(username)) e.username = "Format username tidak valid";
+    if (!username) {
+      errors.username = "Username wajib diisi";
+    }
+    // if (!username) e.username = "username wajib diisi";
+    // else if (!/^\S+@\S+\.\S+$/.test(username)) e.username = "Format username tidak valid";
     if (!password) e.password = "Password wajib diisi";
     else if (password.length < 6) e.password = "Password minimal 6 karakter";
     return e;
@@ -40,6 +43,7 @@ export default function Login() {
       // MOCK: simulasi sukses
       await new Promise((r) => setTimeout(r, 700));
       setMessage({ type: "success", text: "Login berhasil" });
+      navigate("/dashboard");
       // redirect contoh: router.push('/dashboard')
     } catch (err) {
       setMessage({ type: "error", text: err.message || "Gagal login" });
@@ -108,7 +112,7 @@ export default function Login() {
                     className="bg-blue-900 absolute right-0 top-1/2 -translate-y-1/2 text-sm px-2 py-1 rounded-md focus:outline-none"
                     aria-label={showPassword ? "Hidden" : "Show"}
                 >
-                    {showPassword ? "Sembunyikan" : "Tampilkan"}
+                    {showPassword ? "hide" : "show"}
                 </button>
                 </div>
                 {errors.password && (
