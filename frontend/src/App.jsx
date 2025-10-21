@@ -1,31 +1,54 @@
-import * as React from "react";
+// src/App.jsx (VERSI LENGKAP)
 
-// import {
-//   MemoryRouter,
-//   Routes,
-//   Route,
-// } from "react-router-dom";
-// import { BrowserRouter } from "react-router-dom";
+// Wajib ada untuk JSX
+import * as React from "react"; 
+import { Routes, Route } from "react-router-dom"; 
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-
+// Pastikan semua komponen ini di-import
 import Dashboard from "./pages/dashboard/Index";
 import Login from "./pages/auth/index";
 import Register from "./pages/register/index";
-
+import ProtectedRoute from "./components/ProtectedRoute.jsx"; 
+import Exams from "./pages/exams/Index.jsx";
+// ... (Pastikan Anda meng-import komponen ManageUsers jika digunakan)
 
 function App() {
-
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login/>} /> 
-        <Route path="/dashboard" element={<Dashboard/>} />
-        <Route path="/register" element={<Register/>} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Login/>} /> 
+      <Route path="/register" element={<Register/>} />
+      
+      {/* PENGGUNAAN PROTECTED ROUTE */}
+      <Route 
+        path="/dashboard" 
+        element={
+          <ProtectedRoute requiredRole={['siswa', 'guru', 'admin']}>
+            <Dashboard/>
+          </ProtectedRoute>
+        } 
+      />
+      {/* Rute lain yang hanya bisa diakses guru/admin: */}
+      <Route 
+        path="/manage-users" 
+        element={
+          <ProtectedRoute requiredRole={['guru', 'admin']}>
+            {/* Ganti ini dengan komponen yang sesungguhnya! */}
+            <div>Halaman Kelola User (Demo)</div> 
+          </ProtectedRoute>
+        } 
+      />
+
+      <Route 
+        path="/exams" 
+        element={
+          <ProtectedRoute requiredRole={['siswa', 'guru', 'admin']}>
+            <Exams />
+          </ProtectedRoute>
+        } 
+      />
+    </Routes>
   )
 }
 
-export default App
+// BARIS INI WAJIB ADA UNTUK EXPORT DEFAULT
+export default App;
