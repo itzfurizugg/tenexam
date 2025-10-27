@@ -108,9 +108,9 @@ const ExamsIndex = () => {
             <Sidebar />
 
             <div className="flex-1 bg-gradient-to-b from-indigo-400 to-blue-200 p-6 sm:p-10 overflow-y-auto">
-                <h1 className="text-2xl font-semibold text-white mb-8">
+                {/* <h1 className="text-2xl font-semibold text-white mb-8">
                     Hey, {displayName}!
-                </h1>
+                </h1> */}
 
                 <div className="bg-white rounded-2xl shadow-xl min-h-[80vh] p-6">
                     <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b pb-3">
