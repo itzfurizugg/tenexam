@@ -3,6 +3,7 @@
 import React from "react";
 import { useParams, Link } from 'react-router-dom'; // Tambahkan Link
 import Sidebar from "../../components/Sidebar";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../context/AuthContext.jsx'; 
 // Pastikan jalur ini benar
 import { DUMMY_SUBJECTS } from '../../data/subjects.js'; 
@@ -31,7 +32,11 @@ const StatusBadge = ({ status }) => {
 
 const ExamsIndex = () => {
     const { user } = useAuth();
+    const navigate = useNavigate();
     const { subjectId } = useParams(); 
+    const kembali = () => {
+        navigate('/exams', { replace: true });
+    }
 
     const displayName = user.name || user.username || "Pengguna";
 
@@ -39,6 +44,7 @@ const ExamsIndex = () => {
     let mainContent;
 
     if (subjectId) {
+        console.log('Subject ID yang terambil:', subjectId);
         // --- LOGIKA HALAMAN UJIAN SPESIFIK (/exams/:subjectId) ---
         const subject = DUMMY_SUBJECTS.find(s => s.path.endsWith(`/${subjectId}`));
         const subjectName = subject ? subject.name : subjectId.charAt(0).toUpperCase() + subjectId.slice(1);
@@ -47,14 +53,19 @@ const ExamsIndex = () => {
         mainContent = (
             <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
                 <h3 className="text-xl font-semibold mb-4 text-gray-800">Detail Ujian {subjectName}</h3>
-                <p><strong>Total Soal:</strong> {subject?.totalQuestions || 'N/A'}</p>
-                <p><strong>Waktu:</strong> {subject?.durationMinutes || 'N/A'} menit</p>
-                <p className="mt-4">
+                <p className="text-black"><strong>Total Soal:</strong> {subject?.totalQuestions || 'N/A'}</p>
+                <p className="text-black"><strong>Waktu:</strong> {subject?.durationMinutes || 'N/A'} menit</p>
+                <p className="mt-4 text-black">
                   <span className="text-lg font-bold text-red-600">Peringatan:</span> Setelah dimulai, ujian tidak bisa dijeda.
                 </p>
                 <button 
                   className="mt-6 bg-indigo-700 text-white py-2 px-6 rounded-lg hover:bg-indigo-800 transition shadow-md">
                     Mulai Ujian {subjectName} Sekarang
+                </button>
+                <button
+                    onClick={kembali}
+                    className="mt-4 ml-4 bg-gray-300 text-gray-800 py-2 px-6 rounded-lg hover:bg-gray-400 transition shadow-md">
+                    Kembali ke Daftar Ujian 
                 </button>
             </div>
         );

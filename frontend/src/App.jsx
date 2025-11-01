@@ -10,6 +10,9 @@ import Login from "./pages/auth/index";
 import Register from "./pages/register/index";
 import ProtectedRoute from "./components/ProtectedRoute.jsx"; 
 import Exams from "./pages/exams/Index.jsx";
+import ExamDetailPage from "./pages/exams/Index.jsx";
+import ProfilePage from "./pages/profile/Index.jsx";
+import GradesPage from "./pages/grades/Index.jsx";
 // ... (Pastikan Anda meng-import komponen ManageUsers jika digunakan)
 
 function App() {
@@ -47,6 +50,11 @@ function App() {
           </ProtectedRoute>
         } 
       />
+
+      <Route path="/exams/:subjectId" element={<ExamDetailPage />} />
+      <Route path="/grades" element={<GradesPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
+
     </Routes>
   )
 }
