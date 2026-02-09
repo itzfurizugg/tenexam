@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Soal;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Imports\SoalImport;
+// use Maatwebsite\Excel\Facades\Excel;
+// use App\Imports\SoalImport;
 
 class SoalController extends Controller
 {
@@ -20,17 +20,39 @@ class SoalController extends Controller
     // Import soal dari Excel
     public function import(Request $request)
     {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls',
-            'mapel_id' => 'required|exists:mapel,id'
+        return response()->json(['message' => 'Fitur import Excel sedang dalam penyesuaian untuk Laravel 12'], 501);
+    }
+
+    // Update soal
+    public function update(Request $request, $id)
+    {
+        $soal = Soal::findOrFail($id);
+
+        $validated = $request->validate([
+            'pertanyaan' => 'sometimes|string',
+            'opsi_a' => 'sometimes|string',
+            'opsi_b' => 'sometimes|string',
+            'opsi_c' => 'sometimes|string',
+            'opsi_d' => 'sometimes|string',
+            'jawaban_benar' => 'sometimes|in:A,B,C,D',
         ]);
 
-        // Hapus soal lama berdasarkan mapel_id
-        Soal::where('mapel_id', $request->mapel_id)->delete();
+        $soal->update($validated);
 
-        // Import soal baru
-        Excel::import(new SoalImport($request->mapel_id), $request->file('file'));
+        return response()->json([
+            'message' => 'Soal berhasil diupdate',
+            'data' => $soal
+        ]);
+    }
 
-        return response()->json(['message' => 'Soal lama dihapus dan soal baru berhasil diimport']);
+    // Hapus soal
+    public function destroy($id)
+    {
+        $soal = Soal::findOrFail($id);
+        $soal->delete();
+
+        return response()->json([
+            'message' => 'Soal berhasil dihapus'
+        ]);
     }
 }

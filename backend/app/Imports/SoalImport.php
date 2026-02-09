@@ -3,10 +3,8 @@
 namespace App\Imports;
 
 use App\Models\Soal;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class SoalImport implements ToModel, WithHeadingRow
+class SoalImport
 {
     protected $mapel_id;
 
@@ -17,15 +15,6 @@ class SoalImport implements ToModel, WithHeadingRow
     
     public function model(array $row)
     {
-        return new Soal([
-            'mapel_id' => $this->mapel_id,
-            'pertanyaan' => $row['pertanyaan'],
-            'opsi_a' => $row['opsi_a'],
-            'opsi_b' => $row['opsi_b'],
-            'opsi_c' => $row['opsi_c'],
-            'opsi_d' => $row['opsi_d'],
-            'jawaban_benar' => $row['jawaban_benar'],
-        ]);
+        // Temporarily disabled for Laravel 12 compatibility
     }
-    
 }
