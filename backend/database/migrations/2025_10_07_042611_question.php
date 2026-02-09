@@ -5,7 +5,7 @@
     use Illuminate\Support\Facades\Schema;
 
 
-    class CreateQuestionsTable extends Migration
+    return new class extends Migration
     {
         public function up()
     {

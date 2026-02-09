@@ -24,13 +24,13 @@ class SoalController extends Controller
             'file' => 'required|mimes:xlsx,xls',
             'mapel_id' => 'required|exists:mapel,id'
         ]);
-    
+
         // Hapus soal lama berdasarkan mapel_id
         Soal::where('mapel_id', $request->mapel_id)->delete();
-    
+
         // Import soal baru
         Excel::import(new SoalImport($request->mapel_id), $request->file('file'));
-    
+
         return response()->json(['message' => 'Soal lama dihapus dan soal baru berhasil diimport']);
     }
 }

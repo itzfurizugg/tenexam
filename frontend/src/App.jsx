@@ -13,6 +13,7 @@ import Exams from "./pages/exams/Index.jsx";
 import ExamDetailPage from "./pages/exams/Index.jsx";
 import ProfilePage from "./pages/profile/Index.jsx";
 import GradesPage from "./pages/grades/Index.jsx";
+import ExamScene from "./pages/exams/examScene.jsx";
 // ... (Pastikan Anda meng-import komponen ManageUsers jika digunakan)
 
 function App() {
@@ -20,16 +21,10 @@ function App() {
     <Routes>
       <Route path="/" element={<Login/>} /> 
       <Route path="/register" element={<Register/>} />
+      <Route path="/exams/:subjectId/start" element={<ExamScene />} />
       
       {/* PENGGUNAAN PROTECTED ROUTE */}
-      <Route 
-        path="/dashboard" 
-        element={
-          <ProtectedRoute requiredRole={['siswa', 'guru', 'admin']}>
-            <Dashboard/>
-          </ProtectedRoute>
-        } 
-      />
+      <Route path="/dashboard" element={<Dashboard />} />
 
       {/* Rute lain yang hanya bisa diakses guru/admin: */}
       <Route 
@@ -39,7 +34,7 @@ function App() {
             {/* Ganti ini dengan komponen yang sesungguhnya! */}
             <div>Halaman Kelola User (Demo)</div> 
           </ProtectedRoute>
-        } 
+        }
       />
 
       <Route 

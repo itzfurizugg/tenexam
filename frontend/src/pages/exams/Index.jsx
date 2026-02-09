@@ -58,9 +58,7 @@ const ExamsIndex = () => {
                 <p className="mt-4 text-black">
                   <span className="text-lg font-bold text-red-600">Peringatan:</span> Setelah dimulai, ujian tidak bisa dijeda.
                 </p>
-                <button 
-                  className="mt-6 bg-indigo-700 text-white py-2 px-6 rounded-lg hover:bg-indigo-800 transition shadow-md">
-                    Mulai Ujian {subjectName} Sekarang
+                <button onClick={() => navigate(`/exams/${subjectId}/start`)} className="w-full bg-indigo-600 text-white py-4 my-4 rounded-lg font-bold text-lg shadow-lg hover:bg-indigo-700 transition-all">Mulai Ujian Sekarang
                 </button>
                 <button
                     onClick={kembali}
