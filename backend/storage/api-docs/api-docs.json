@@ -15,6 +15,365 @@
         }
     ],
     "paths": {
+        "/api/admin/exams": {
+            "get": {
+                "tags": [
+                    "Admin - Exams"
+                ],
+                "summary": "Daftar semua ujian (Admin)",
+                "operationId": "7055a8502b98b329b58e536212c90b0d",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin - Exams"
+                ],
+                "summary": "Buat ujian baru",
+                "operationId": "213c85e93c80d52fef44d28b217bda70",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "duration_minutes"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "duration_minutes": {
+                                        "type": "integer"
+                                    },
+                                    "start_at": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "end_at": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/exams/{exam}": {
+            "get": {
+                "tags": [
+                    "Admin - Exams"
+                ],
+                "summary": "Detail ujian (Admin)",
+                "operationId": "705fb5b2d337f1fd01a85d3c34a3295a",
+                "parameters": [
+                    {
+                        "name": "exam",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin - Exams"
+                ],
+                "summary": "Update ujian",
+                "operationId": "f9b26d735950980e1b7d52684e135e0c",
+                "parameters": [
+                    {
+                        "name": "exam",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "duration_minutes": {
+                                        "type": "integer"
+                                    },
+                                    "start_at": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "end_at": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated"
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin - Exams"
+                ],
+                "summary": "Hapus ujian",
+                "operationId": "84b20d5656a576c562372e7df3786c21",
+                "parameters": [
+                    {
+                        "name": "exam",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/exams/{exam}/questions": {
+            "post": {
+                "tags": [
+                    "Admin - Exams"
+                ],
+                "summary": "Tambah soal ke ujian",
+                "operationId": "6a57b67b5a9bb5b83f5bb2653a2cdc96",
+                "parameters": [
+                    {
+                        "name": "exam",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "prompt",
+                                    "options",
+                                    "answer",
+                                    "score"
+                                ],
+                                "properties": {
+                                    "prompt": {
+                                        "type": "string"
+                                    },
+                                    "options": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "answer": {
+                                        "type": "string"
+                                    },
+                                    "score": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Added"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/exams/{exam}/questions/{question}": {
+            "put": {
+                "tags": [
+                    "Admin - Exams"
+                ],
+                "summary": "Update soal",
+                "operationId": "a50a63197a23e6d222e6000206c7242d",
+                "parameters": [
+                    {
+                        "name": "exam",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "question",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "prompt": {
+                                        "type": "string"
+                                    },
+                                    "options": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "answer": {
+                                        "type": "string"
+                                    },
+                                    "score": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin - Exams"
+                ],
+                "summary": "Hapus soal",
+                "operationId": "0c95b33b9633e503bc229e1f2dfc1a3e",
+                "parameters": [
+                    {
+                        "name": "exam",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "question",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/register": {
             "post": {
                 "tags": [
@@ -516,6 +875,565 @@
                     }
                 ]
             }
+        },
+        "/api/admin/kelas": {
+            "get": {
+                "tags": [
+                    "Admin - Kelas"
+                ],
+                "summary": "Daftar semua kelas",
+                "operationId": "c7357c0b05f0d13ca21d82b76a45b05a",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin - Kelas"
+                ],
+                "summary": "Tambah kelas baru",
+                "operationId": "d4ee1e4c4ae2f5a44889e6d11fce7c56",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nama_kelas"
+                                ],
+                                "properties": {
+                                    "nama_kelas": {
+                                        "type": "string",
+                                        "example": "Kelas 10"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/kelas/{id}": {
+            "put": {
+                "tags": [
+                    "Admin - Kelas"
+                ],
+                "summary": "Update nama kelas",
+                "operationId": "679d0ab9471cebfeaf65289443ad96ca",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nama_kelas"
+                                ],
+                                "properties": {
+                                    "nama_kelas": {
+                                        "type": "string",
+                                        "example": "Kelas 10-A"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin - Kelas"
+                ],
+                "summary": "Hapus kelas",
+                "operationId": "4b16fb5a35d009f86455f84a2ccf733f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/mapel/{kelas_id}": {
+            "get": {
+                "tags": [
+                    "Admin - Mapel"
+                ],
+                "summary": "Daftar semua mata pelajaran per kelas",
+                "operationId": "13330bffc22027fe4c745631ddb6a047",
+                "parameters": [
+                    {
+                        "name": "kelas_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/mapel": {
+            "post": {
+                "tags": [
+                    "Admin - Mapel"
+                ],
+                "summary": "Tambah mata pelajaran baru",
+                "operationId": "b8e6270f20bc349a00296129d4e7940e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nama_mapel",
+                                    "kelas_id"
+                                ],
+                                "properties": {
+                                    "nama_mapel": {
+                                        "type": "string",
+                                        "example": "Matematika"
+                                    },
+                                    "kelas_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/mapel/{id}": {
+            "put": {
+                "tags": [
+                    "Admin - Mapel"
+                ],
+                "summary": "Update mata pelajaran",
+                "operationId": "90d3885fdcad085ff953017ea0db3012",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nama_mapel",
+                                    "kelas_id"
+                                ],
+                                "properties": {
+                                    "nama_mapel": {
+                                        "type": "string",
+                                        "example": "Fisika"
+                                    },
+                                    "kelas_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin - Mapel"
+                ],
+                "summary": "Hapus mata pelajaran",
+                "operationId": "e6319172006fff179a2794732f62f4fe",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/nilai": {
+            "post": {
+                "tags": [
+                    "Admin - Nilai"
+                ],
+                "summary": "Simpan nilai siswa",
+                "operationId": "f517eb92331da2c72e0d1b88c30dce5c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "mapel_id",
+                                    "skor"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer"
+                                    },
+                                    "mapel_id": {
+                                        "type": "integer"
+                                    },
+                                    "skor": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/nilai/{user_id}": {
+            "get": {
+                "tags": [
+                    "Admin - Nilai"
+                ],
+                "summary": "Lihat nilai per siswa",
+                "operationId": "7694e3348c6186e872cd9b5265e16a5a",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/soal/{mapel_id}": {
+            "get": {
+                "tags": [
+                    "Admin - Soal"
+                ],
+                "summary": "Daftar semua soal per mata pelajaran",
+                "operationId": "dc40ebcaa0926aee8c155ba6888912b0",
+                "parameters": [
+                    {
+                        "name": "mapel_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/soal/import": {
+            "post": {
+                "tags": [
+                    "Admin - Soal"
+                ],
+                "summary": "Import soal dari Excel (Soon)",
+                "operationId": "ee869dc718aeee5ed3d36bcb71677902",
+                "responses": {
+                    "501": {
+                        "description": "Not Implemented"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/soal/{id}": {
+            "put": {
+                "tags": [
+                    "Admin - Soal"
+                ],
+                "summary": "Update soal",
+                "operationId": "85a12420a7106200d2eb8aac6e36ce85",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "pertanyaan": {
+                                        "type": "string"
+                                    },
+                                    "opsi_a": {
+                                        "type": "string"
+                                    },
+                                    "opsi_b": {
+                                        "type": "string"
+                                    },
+                                    "opsi_c": {
+                                        "type": "string"
+                                    },
+                                    "opsi_d": {
+                                        "type": "string"
+                                    },
+                                    "jawaban_benar": {
+                                        "type": "string",
+                                        "enum": [
+                                            "A",
+                                            "B",
+                                            "C",
+                                            "D"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin - Soal"
+                ],
+                "summary": "Hapus soal",
+                "operationId": "527e183435b0cb5781e3dd6ad315e946",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -530,12 +1448,32 @@
     },
     "tags": [
         {
+            "name": "Admin - Exams",
+            "description": "Admin - Exams"
+        },
+        {
             "name": "Authentication",
             "description": "Authentication"
         },
         {
             "name": "Exams",
             "description": "Exams"
+        },
+        {
+            "name": "Admin - Kelas",
+            "description": "Admin - Kelas"
+        },
+        {
+            "name": "Admin - Mapel",
+            "description": "Admin - Mapel"
+        },
+        {
+            "name": "Admin - Nilai",
+            "description": "Admin - Nilai"
+        },
+        {
+            "name": "Admin - Soal",
+            "description": "Admin - Soal"
         }
     ]
 }

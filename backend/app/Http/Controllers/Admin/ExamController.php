@@ -6,16 +6,47 @@ use App\Http\Controllers\Controller;
 use App\Models\Exam;
 use App\Models\Question;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
 class ExamController extends Controller
 {
-    // Daftar semua ujian
+    #[OA\Get(
+        path: "/api/admin/exams",
+        summary: "Daftar semua ujian (Admin)",
+        tags: ["Admin - Exams"],
+        security: [["bearerAuth" => []]],
+        responses: [
+            new OA\Response(response: 200, description: "Success", content: new OA\JsonContent(type: "array", items: new OA\Items(type: "object")))
+        ]
+    )]
     public function index()
     {
         return Exam::with('questions')->get();
     }
 
-    // Buat ujian baru
+    #[OA\Post(
+        path: "/api/admin/exams",
+        summary: "Buat ujian baru",
+        tags: ["Admin - Exams"],
+        security: [["bearerAuth" => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["title", "duration_minutes"],
+                properties: [
+                    new OA\Property(property: "title", type: "string"),
+                    new OA\Property(property: "description", type: "string"),
+                    new OA\Property(property: "duration_minutes", type: "integer"),
+                    new OA\Property(property: "start_at", type: "string", format: "date-time"),
+                    new OA\Property(property: "end_at", type: "string", format: "date-time")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: "Created"),
+            new OA\Response(response: 422, description: "Validation Error")
+        ]
+    )]
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -30,13 +61,44 @@ class ExamController extends Controller
         return response()->json($exam, 201);
     }
 
-    // Lihat detail ujian
+    #[OA\Get(
+        path: "/api/admin/exams/{exam}",
+        summary: "Detail ujian (Admin)",
+        tags: ["Admin - Exams"],
+        security: [["bearerAuth" => []]],
+        parameters: [new OA\Parameter(name: "exam", in: "path", required: true, schema: new OA\Schema(type: "integer"))],
+        responses: [
+            new OA\Response(response: 200, description: "Success"),
+            new OA\Response(response: 404, description: "Not Found")
+        ]
+    )]
     public function show(Exam $exam)
     {
         return $exam->load('questions');
     }
 
-    // Update ujian
+    #[OA\Put(
+        path: "/api/admin/exams/{exam}",
+        summary: "Update ujian",
+        tags: ["Admin - Exams"],
+        security: [["bearerAuth" => []]],
+        parameters: [new OA\Parameter(name: "exam", in: "path", required: true, schema: new OA\Schema(type: "integer"))],
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "title", type: "string"),
+                    new OA\Property(property: "description", type: "string"),
+                    new OA\Property(property: "duration_minutes", type: "integer"),
+                    new OA\Property(property: "start_at", type: "string", format: "date-time"),
+                    new OA\Property(property: "end_at", type: "string", format: "date-time")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "Updated"),
+            new OA\Response(response: 422, description: "Validation Error")
+        ]
+    )]
     public function update(Request $request, Exam $exam)
     {
         $data = $request->validate([
@@ -51,14 +113,44 @@ class ExamController extends Controller
         return response()->json($exam);
     }
 
-    // Hapus ujian
+    #[OA\Delete(
+        path: "/api/admin/exams/{exam}",
+        summary: "Hapus ujian",
+        tags: ["Admin - Exams"],
+        security: [["bearerAuth" => []]],
+        parameters: [new OA\Parameter(name: "exam", in: "path", required: true, schema: new OA\Schema(type: "integer"))],
+        responses: [
+            new OA\Response(response: 204, description: "Deleted")
+        ]
+    )]
     public function destroy(Exam $exam)
     {
         $exam->delete();
         return response()->json(null, 204);
     }
 
-    // Tambah soal ke ujian
+    #[OA\Post(
+        path: "/api/admin/exams/{exam}/questions",
+        summary: "Tambah soal ke ujian",
+        tags: ["Admin - Exams"],
+        security: [["bearerAuth" => []]],
+        parameters: [new OA\Parameter(name: "exam", in: "path", required: true, schema: new OA\Schema(type: "integer"))],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["prompt", "options", "answer", "score"],
+                properties: [
+                    new OA\Property(property: "prompt", type: "string"),
+                    new OA\Property(property: "options", type: "array", items: new OA\Items(type: "string")),
+                    new OA\Property(property: "answer", type: "string"),
+                    new OA\Property(property: "score", type: "integer")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: "Added")
+        ]
+    )]
     public function addQuestion(Request $request, Exam $exam)
     {
         $data = $request->validate([
@@ -72,7 +164,29 @@ class ExamController extends Controller
         return response()->json($question, 201);
     }
 
-    // Update soal dalam ujian
+    #[OA\Put(
+        path: "/api/admin/exams/{exam}/questions/{question}",
+        summary: "Update soal",
+        tags: ["Admin - Exams"],
+        security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(name: "exam", in: "path", required: true, schema: new OA\Schema(type: "integer")),
+            new OA\Parameter(name: "question", in: "path", required: true, schema: new OA\Schema(type: "integer"))
+        ],
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "prompt", type: "string"),
+                    new OA\Property(property: "options", type: "array", items: new OA\Items(type: "string")),
+                    new OA\Property(property: "answer", type: "string"),
+                    new OA\Property(property: "score", type: "integer")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "Updated")
+        ]
+    )]
     public function updateQuestion(Request $request, Exam $exam, Question $question)
     {
         $data = $request->validate([
@@ -86,7 +200,19 @@ class ExamController extends Controller
         return response()->json($question);
     }
 
-    // Hapus soal dari ujian
+    #[OA\Delete(
+        path: "/api/admin/exams/{exam}/questions/{question}",
+        summary: "Hapus soal",
+        tags: ["Admin - Exams"],
+        security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(name: "exam", in: "path", required: true, schema: new OA\Schema(type: "integer")),
+            new OA\Parameter(name: "question", in: "path", required: true, schema: new OA\Schema(type: "integer"))
+        ],
+        responses: [
+            new OA\Response(response: 204, description: "Deleted")
+        ]
+    )]
     public function deleteQuestion(Exam $exam, Question $question)
     {
         $question->delete();
