@@ -38,13 +38,15 @@ export default function Login() {
           const data = await response.json(); 
 
           if (response.ok) {
-              // Gunakan variabel 'data' yang sudah diambil tadi
+              // Pastikan backend kamu mengirimkan 'token'
               const userWithRole = {
                   ...data.user,
                   role: data.user.username === 'admin' ? 'admin' : 'siswa'
               };
 
-              login(userWithRole); 
+              // KIRIM TOKEN JUGA KE SINI (Sesuai update AuthContext kita sebelumnya)
+              login(userWithRole, data.token); 
+              
               navigate("/dashboard");
           } else {
               // Jika error, ambil pesan dari 'data'

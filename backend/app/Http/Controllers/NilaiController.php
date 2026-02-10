@@ -28,6 +28,45 @@ class NilaiController extends Controller
             new OA\Response(response: 200, description: "Success")
         ]
     )]
+
+    public function getUserGrades()
+    {
+        try {
+            // 1. Cek apakah user sudah login
+            $user = auth()->user();
+            if (!$user) {
+                return response()->json(['message' => 'Unauthenticated.'], 401);
+            }
+
+            // 2. Ambil data nilai dengan relasi mapel
+            // Pastikan nama tabel kamu 'nilai' (sesuai Model)
+            $grades = Nilai::with('mapel')
+                ->where('user_id', $user->id)
+                ->get();
+
+            // 3. Transformasi data agar sesuai dengan nama variabel di React (nilai akhir)
+            $result = $grades->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'mapel' => [
+                        'nama_mapel' => $item->mapel ? $item->mapel->nama_mapel : 'Mapel Terhapus'
+                    ],
+                    'nilai' => $item->skor, // Kita ubah 'skor' jadi 'nilai' supaya React nggak bingung
+                    'created_at' => $item->created_at
+                ];
+            });
+
+            return response()->json($result, 200);
+
+        } catch (\Exception $e) {
+            // Jika error, kita kirim pesan error aslinya agar kelihatan di Inspect Element
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function store(Request $request)
     {
         $nilai = Nilai::create([

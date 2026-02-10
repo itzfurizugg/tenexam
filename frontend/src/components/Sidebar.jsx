@@ -17,7 +17,6 @@ const Sidebar = () => {
     const location = useLocation(); // Mendapatkan URL saat ini
 
     // Cek apakah path saat ini adalah bagian dari /exams (untuk membuka sub-menu)
-    const isExamsActiveParent = location.pathname.startsWith('/exams');
 
     // Fungsi untuk Log Out
     const handleLogout = () => {
@@ -38,7 +37,7 @@ const Sidebar = () => {
         if (role === 'siswa') {
             return [
                 ...baseItems,
-                { name: "Exams", path: "/exams" },
+                { name: "Exams", path: "/exam/:subjectId/start" },
                 { name: "Grades", path: "/grades" },
             ];
         } 

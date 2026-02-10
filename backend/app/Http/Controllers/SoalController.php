@@ -18,11 +18,56 @@ class SoalController extends Controller
             new OA\Response(response: 200, description: "Success", content: new OA\JsonContent(type: "array", items: new OA\Items(type: "object")))
         ]
     )]
+
+    public function bulkStore(Request $request)
+    {
+        try {
+            $exam_id = $request->exam_id;
+            $soalData = $request->data;
+
+            foreach ($soalData as $item) {
+                \App\Models\Question::create([
+                    'exam_id' => $exam_id,
+                    'prompt'  => $item['pertanyaan'],
+                    'options' => [
+                        'A' => $item['a'] ?? '-',
+                        'B' => $item['b'] ?? '-',
+                        'C' => $item['c'] ?? '-',
+                        'D' => $item['d'] ?? '-',
+                    ],
+                    'answer' => strtoupper($item['kunci']), // Pastikan "A", "B", dst
+                    'score'  => 10,
+                ]);
+            }
+            return response()->json(['message' => 'Berhasil'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    // Tambahkan function ini di dalam class SoalController
+
+public function getSoalByKelas($kelas_id)
+{
+    try {
+        // Mengambil semua soal yang memiliki kelas_id tersebut
+        // Pastikan di tabel 'soals' kamu memang ada kolom 'kelas_id'
+        $soal = Soal::where('kelas_id', $kelas_id)->get();
+
+        if ($soal->isEmpty()) {
+            return response()->json(['message' => 'Soal tidak ditemukan untuk kelas ini'], 404);
+        }
+
+        return response()->json($soal, 200);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+}
+
     public function index($mapel_id)
     {
-        return response()->json(
-            Soal::where('mapel_id', $mapel_id)->get()
-        );
+        $soal = Soal::where('mapel_id', $mapel_id)->get();
+        return response()->json($soal);
     }
 
     #[OA\Post(

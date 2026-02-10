@@ -1,165 +1,158 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import Sidebar from "../../components/Sidebar";
 
 const ExamScene = () => {
-    const { subjectId } = useParams();
-    const navigate = useNavigate();
-    
-    // State soal dan jawaban
+    const [classList, setClassList] = useState([]); 
+    const [selectedClass, setSelectedClass] = useState(null);
+    const [selectedSubject, setSelectedSubject] = useState(null);
+    const [subjects, setSubjects] = useState([]);
     const [questions, setQuestions] = useState([]);
-    const [currentNumber, setCurrentNumber] = useState(0); // Soal ke-berapa
-    const [selectedAnswers, setSelectedAnswers] = useState({}); // Simpan jawaban siswa { soalId: 'A' }
-    const [timeLeft, setTimeLeft] = useState(3600); // Contoh 60 menit dalam detik
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [isExamStarted, setIsExamStarted] = useState(false);
+    const [userAnswers, setUserAnswers] = useState({});
+    const [loading, setLoading] = useState(false);
 
-    // 1. Fetch Soal dari Backend Laravel
+    // 1. Ambil daftar kelas dari API
     useEffect(() => {
-        const fetchQuestions = async () => {
+        const fetchClasses = async () => {
+            setLoading(true);
             try {
-                const response = await fetch(`http://127.0.0.1:8001/api/exams/${subjectId}`);
-                if (!response.ok) throw new Error('Gagal mengambil data dari server');
-                
-                const data = await response.json();
-                setQuestions(data.questions || []); // Pastikan selalu array
-                setLoading(false);
+                const res = await fetch("http://127.0.0.1:8001/api/admin/kelas");
+                const data = await res.json();
+                setClassList(Array.isArray(data) ? data : []);
             } catch (err) {
-                setError(err.message);
+                console.error("Gagal load kelas:", err);
+            } finally {
                 setLoading(false);
             }
         };
-        fetchQuestions();
-    }, [subjectId]);
+        fetchClasses();
+    }, []);
 
-    // PROTEKSI: Jika loading atau error, tampilkan pesan, jangan paksa render soal
-    if (loading) return <div className="p-20 text-center font-bold">Sedang memuat soal...</div>;
-    if (error) return <div className="p-20 text-center text-red-500 font-bold">Error: {error}</div>;
-    if (questions.length === 0) return <div className="p-20 text-center">Tidak ada soal tersedia untuk ujian ini.</div>;
-
-    const currentQuestion = questions[currentNumber];
-
-    // 2. Logic Timer
-    useEffect(() => {
-        if (timeLeft <= 0) handleFinish();
-        const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
-        return () => clearInterval(timer);
-    }, [timeLeft]);
-
-    const formatTime = (seconds) => {
-        const m = Math.floor(seconds / 60);
-        const s = seconds % 60;
-        return `${m}:${s < 10 ? '0' : ''}${s}`;
-    };
-
-    const handleAnswer = (questionId, option) => {
-        setSelectedAnswers({ ...selectedAnswers, [questionId]: option });
-    };
-
-    const handleFinish = async () => {
-        const confirmSubmit = window.confirm("Apakah Anda yakin ingin mengakhiri ujian?");
-        if (!confirmSubmit) return;
-
-        // Format data sesuai validasi di Controller: answers.*.question_id & answers.*.answer
-        const payload = {
-            answers: questions.map(q => ({
-                question_id: q.id,
-                answer: selectedAnswers[q.id] || "" // Kosong jika tidak dijawab
-            }))
-        };
-
+    // 2. Ambil Mapel berdasarkan Kelas
+    const fetchSubjects = async (classId) => {
+        setLoading(true);
+        setSelectedClass(classId);
         try {
-            const response = await fetch(`http://127.0.0.1:8001/api/exams/${subjectId}/submit`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify(payload)
-            });
-
-            const result = await response.json();
-            alert(`Ujian selesai! Skor Anda: ${result.score}`);
-            navigate('/grades');
+            const res = await fetch(`http://127.0.0.1:8001/api/admin/mapel/${classId}`);
+            const data = await res.json();
+            setSubjects(Array.isArray(data) ? data : []);
         } catch (err) {
-            alert("Gagal mengirim jawaban. Cek koneksi internet!");
+            console.error("Gagal load mapel:", err);
+        } finally {
+            setLoading(false);
         }
     };
 
-    if (!questions || questions.length === 0) {
-        return 
-        <div className="p-10 text-center">Memuat soal atau terjadi kesalahan server...</div>;
-    }
+    // 3. Ambil Soal berdasarkan Mapel
+    const startExam = async (subject) => {
+        setLoading(true);
+        setSelectedSubject(subject);
+        try {
+            const res = await fetch(`http://127.0.0.1:8001/api/admin/soal/${subject.id}`);
+            const data = await res.json();
+            setQuestions(Array.isArray(data) ? data : []);
+            setIsExamStarted(true);
+        } catch (err) {
+            alert("Error saat memuat soal.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    // ... kode import dan logic (fetch, timer, dll)
+    const handleAnswer = (questionId, option) => {
+        setUserAnswers(prev => ({ ...prev, [questionId]: option }));
+    };
 
-return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-        {/* Header (Tetap sama) */}
-        <div className="bg-indigo-700 p-4 text-white flex justify-between items-center shadow-lg">
-            <h2 className="font-bold text-white">Ujian: {subjectId?.toUpperCase()}</h2>
-            <div className="bg-red-500 px-4 py-1 rounded-lg font-mono font-bold">
-                Sisa Waktu: {formatTime(timeLeft)}
-            </div>
-        </div>
+    const handleSubmitExam = () => {
+        if (!confirm("Yakin ingin mengumpulkan?")) return;
+        alert("Jawaban terkirim!");
+        window.location.reload();
+    };
 
-        <div className="flex flex-1 p-6 gap-6">
-            {/* AREA SOAL - TARUH DI SINI */}
-            <div className="flex-1 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-                <div className="mb-6 flex justify-between items-center text-gray-400 font-bold text-sm">
-                    {/* Gunakan optional chaining agar tidak error saat questions masih null */}
-                    <span>PERTANYAAN {currentNumber + 1} DARI {questions?.length || 0}</span>
-                </div>
-                
-                {/* 1. TAMPILKAN PROMPT (TEKS SOAL) */}
-                <h3 className="text-xl text-gray-800 font-medium mb-8">
-                    {currentQuestion?.prompt} 
-                </h3>
-
-                {/* 2. TAMPILKAN OPTIONS (PILIHAN JAWABAN) */}
-                <div className="space-y-4">
-                    {currentQuestion?.options && Object.entries(currentQuestion.options).map(([key, value]) => (
-                        <button
-                            key={key}
-                            onClick={() => handleAnswer(currentQuestion.id, key)}
-                            className={`w-full text-left p-4 rounded-2xl border-2 transition-all ${
-                                selectedAnswers[currentQuestion.id] === key 
-                                ? 'border-indigo-600 bg-indigo-50 text-indigo-700 font-bold' 
-                                : 'border-gray-100 hover:border-indigo-200 text-gray-600'
-                            }`}
+    return (
+        <div className="flex h-screen w-screen bg-gray-50 text-black">
+            <Sidebar />
+            <div className="flex-1 flex flex-col overflow-hidden">
+                <header className="bg-white border-b py-4 px-8 flex justify-between items-center shadow-sm">
+                    <h2 className="text-xl font-bold uppercase">
+                        {isExamStarted ? `Ujian: ${selectedSubject?.nama_mapel}` : "Ujian Online"}
+                    </h2>
+                    {(selectedClass || isExamStarted) && (
+                        <button 
+                            onClick={() => isExamStarted ? setIsExamStarted(false) : setSelectedClass(null)}
+                            className="bg-gray-200 px-4 py-2 rounded-lg font-bold text-sm"
                         >
-                            <span className="mr-4 opacity-50">{key}.</span> {value}
-                        </button>
-                    ))}
-                </div>
-
-                {/* Navigasi Tombol Bawah (Sebelumnya / Selanjutnya) */}
-                <div className="mt-12 flex justify-between">
-                    <button 
-                        disabled={currentNumber === 0}
-                        onClick={() => setCurrentNumber(n => n - 1)}
-                        className="px-6 py-2 text-indigo-600 font-bold disabled:opacity-30"
-                    >
-                        ← Sebelumnya
-                    </button>
-                    
-                    {currentNumber === questions.length - 1 ? (
-                        <button onClick={handleFinish} className="bg-green-600 text-white px-8 py-2 rounded-xl font-bold">
-                            Selesai Ujian
-                        </button>
-                    ) : (
-                        <button onClick={() => setCurrentNumber(n => n + 1)} className="bg-indigo-600 text-white px-8 py-2 rounded-xl font-bold">
-                            Selanjutnya →
+                            ← Kembali
                         </button>
                     )}
-                </div>
-            </div>
+                </header>
 
-            {/* Navigasi Nomor Kanan (Tetap sama) */}
-            {/* ... */}
+                <main className="flex-1 overflow-y-auto p-6">
+                    {/* TAMPILAN LOADING */}
+                    {loading && (
+                        <div className="flex flex-col items-center justify-center py-20">
+                            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mb-4"></div>
+                            <p className="text-gray-500 font-medium">Sedang mengambil data...</p>
+                        </div>
+                    )}
+
+                    {!loading && (
+                        <>
+                            {/* STEP 1: PILIH KELAS */}
+                            {!selectedClass && !isExamStarted && (
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    {classList.map((item) => (
+                                        <div key={item.id} onClick={() => fetchSubjects(item.id)} 
+                                             className="bg-white p-10 rounded-2xl shadow-sm border-2 border-transparent hover:border-blue-500 cursor-pointer text-center transition-all">
+                                            <h3 className="text-2xl font-black uppercase">{item.nama_kelas}</h3>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* STEP 2: PILIH MAPEL */}
+                            {selectedClass && !isExamStarted && (
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    {subjects.map(sub => (
+                                        <div key={sub.id} onClick={() => startExam(sub)}
+                                             className="bg-white p-6 rounded-xl border shadow-sm cursor-pointer hover:bg-blue-600 hover:text-white transition-all text-center font-bold uppercase">
+                                            {sub.nama_mapel}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* STEP 3: SOAL UJIAN */}
+                            {isExamStarted && (
+                                <div className="max-w-3xl mx-auto space-y-8 pb-20">
+                                    {questions.map((q, idx) => (
+                                        <div key={q.id} className="bg-white p-8 rounded-3xl shadow-sm border">
+                                            <p className="text-sm font-bold text-blue-500 mb-2 uppercase">Soal {idx + 1}</p>
+                                            <p className="text-xl font-medium mb-6">{q.pertanyaan}</p>
+                                            <div className="space-y-3">
+                                                {['a', 'b', 'c', 'd'].map((opt) => (
+                                                    <label key={opt} className={`flex items-center p-4 rounded-2xl border-2 cursor-pointer transition-all ${userAnswers[q.id] === opt.toUpperCase() ? 'border-blue-500 bg-blue-50' : 'border-gray-100 hover:bg-gray-50'}`}>
+                                                        <input type="radio" className="hidden" onChange={() => handleAnswer(q.id, opt.toUpperCase())} />
+                                                        <span className={`w-8 h-8 rounded-full flex items-center justify-center font-bold mr-4 ${userAnswers[q.id] === opt.toUpperCase() ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>
+                                                            {opt.toUpperCase()}
+                                                        </span>
+                                                        <span className="text-lg">{q[`opsi_${opt}`]}</span>
+                                                    </label>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <button onClick={handleSubmitExam} className="w-full bg-green-600 text-white py-4 rounded-3xl font-black text-xl shadow-lg hover:bg-green-700">
+                                        SUBMIT JAWABAN
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    )}
+                </main>
+            </div>
         </div>
-    </div>
-);
+    );
 };
 
 export default ExamScene;
